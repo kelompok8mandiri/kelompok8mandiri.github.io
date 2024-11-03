@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Ilmu Keperawatan - Kelompok 8</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f9ff;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            background-color: #0ea5e9;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .team-members {
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            color: #e0f2fe;
+        }
+
+        .quiz-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .question {
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .options {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            text-align: left;
+        }
+
+        .option:hover {
+            background-color: #bae6fd;
+        }
+
+        .next-btn {
+            background-color: #0ea5e9;
+            color: white;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .next-btn:hover {
+            background-color: #0284c7;
+        }
+
+        .result {
+            text-align: center;
+            display: none;
+        }
+
+        .result-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0ea5e9;
+            margin: 1rem 0;
+        }
+
+        .result-category {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #0369a1;
+        }
+
+        .health-tips {
+            background-color: #f0f9ff;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0f2fe;
+            border-radius: 5px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background-color: #0ea5e9;
+            transition: width 0.3s ease;
+        }
+
+        .restart-btn {
+            background-color: #0ea5e9;
+            color: white;
+            margin-top: 1rem;
+        }
+
+        .restart-btn:hover {
+            background-color: #0284c7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Kuis Ilmu Keperawatan</h1>
+            <div class="team-members">
+                <p>Kelompok 8</p>
+                <p>Azfa • Yussha • D Silvi • Selli</p>
+            </div>
+        </header>
+
+        <div class="quiz-container">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+
+            <div id="quiz"></div>
+            <button class="next-btn">Selanjutnya</button>
+
+            <div class="result">
+                <h2>Hasil Kuis Anda</h2>
+                <div class="result-score"></div>
+                <div class="result-category"></div>
+                <div class="health-tips"></div>
+                <button class="restart-btn">Ulangi Kuis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Yang merupakan tujuan utama dari cuci tangan adalah...",
+                options: ["Menghilangkan kotoran", "Mencegah infeksi", "Membersihkan kuman", "Menghaluskan kulit"],
+                correct: 1,
+                explanation: "Tujuan utama mencuci tangan adalah untuk mencegah infeksi dengan membunuh mikroorganisme yang dapat menyebabkan penyakit."
+            },
+            {
+                question: "Waktu ideal untuk mencuci tangan dengan sabun adalah...",
+                options: ["10-15 detik", "15-20 detik", "20-30 detik", "30-40 detik"],
+                correct: 2,
+                explanation: "Waktu ideal mencuci tangan adalah 20-30 detik untuk memastikan pembersihan yang efektif."
+            },
+            {
+                question: "Pengertian vital sign adalah...",
+                options: ["Tanda-tanda kehidupan", "Tanda-tanda kematian", "Tanda-tanda penyakit", "Tanda-tanda kesembuhan"],
+                correct: 0,
+                explanation: "Vital sign adalah tanda-tanda kehidupan yang menunjukkan fungsi vital tubuh."
+            },
+            {
+                question: "Suhu tubuh normal manusia berkisar antara...",
+                options: ["35,8-37,2°C", "36,5-37,5°C", "37,5-38,5°C", "38,5-39,5°C"],
+                correct: 1,
+                explanation: "Suhu tubuh normal manusia berkisar antara 36,5-37,5°C."
+            },
+            {
+                question: "Frekuensi nadi normal pada orang dewasa adalah...",
+                options: ["40-60x/menit", "60-100x/menit", "100-120x/menit", "120-140x/menit"],
+                correct: 1,
+                explanation: "Frekuensi nadi normal orang dewasa adalah 60-100x/menit."
+            },
+            {
+                question: "Personal hygiene adalah...",
+                options: ["Kebersihan lingkungan", "Kebersihan diri", "Kebersihan ruangan", "Kebersihan alat"],
+                correct: 1,
+                explanation: "Personal hygiene adalah kebersihan diri yang merupakan perawatan diri untuk memelihara kesehatan."
+            },
+            {
+                question: "Tekanan darah normal pada orang dewasa adalah...",
+                options: ["90/60 mmHg", "100/70 mmHg", "120/80 mmHg", "140/90 mmHg"],
+                correct: 2,
+                explanation: "Tekanan darah normal pada orang dewasa adalah 120/80 mmHg."
+            },
+            {
+                question: "Pada saat mengukur suhu melalui axilla, termometer dipertahankan selama...",
+                options: ["1 menit", "3 menit", "5 menit", "10 menit"],
+                correct: 2,
+                explanation: "Pengukuran suhu melalui axilla membutuhkan waktu 5 menit untuk hasil yang akurat."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const quizElement = document.getElementById('quiz');
+        const nextButton = document.querySelector('.next-btn');
+        const resultElement = document.querySelector('.result');
+        const progressBar = document.querySelector('.progress');
+        const restartButton = document.querySelector('.restart-btn');
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            
+            let questionHTML = `
+                <div class="question active">
+                    <h2>Pertanyaan ${currentQuestion + 1} dari ${questions.length}</h2>
+                    <p>${question.question}</p>
+                    <div class="options">
+            `;
+
+            question.options.forEach((option, index) => {
+                questionHTML += `
+                    <button class="option" onclick="checkAnswer(${index})">${option}</button>
+                `;
+            });
+
+            questionHTML += `</div></div>`;
+            quizElement.innerHTML = questionHTML;
+            
+            updateProgress();
+        }
+
+        function checkAnswer(selected) {
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach(option => {
+                option.disabled = true;
+            });
+
+            if (selected === question.correct) {
+                options[selected].style.backgroundColor = '#86efac';
+                score++;
+            } else {
+                options[selected].style.backgroundColor = '#fecaca';
+                options[question.correct].style.backgroundColor = '#86efac';
+            }
+
+            nextButton.style.display = 'block';
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function showResult() {
+            const percentage = (score / questions.length) * 100;
+            let category;
+            let tips;
+
+            if (percentage >= 80) {
+                category = "Sangat Baik!";
+                tips = "Anda memiliki pemahaman yang sangat baik tentang ilmu keperawatan dasar! Teruskan pembelajaran dan praktek Anda.";
+            } else if (percentage >= 60) {
+                category = "Cukup Baik";
+                tips = "Anda memiliki dasar yang baik. Tingkatkan pemahaman Anda dengan lebih banyak praktek dan pembelajaran.";
+            } else {
+                category = "Perlu Ditingkatkan";
+                tips = "Jangan menyerah! Pelajari kembali materi dasar keperawatan dan lakukan lebih banyak latihan.";
+            }
+
+            document.querySelector('.result-score').textContent = `Skor: ${percentage}%`;
+            document.querySelector('.result-category').textContent = category;
+            document.querySelector('.health-tips').innerHTML = `
+                <h3>Evaluasi:</h3>
+                <p>${tips}</p>
+            `;
+
+            quizElement.style.display = 'none';
+            nextButton.style.display = 'none';
+            resultElement.style.display = 'block';
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+                nextButton.style.display = 'none';
+            } else {
+                showResult();
+            }
+        });
+
+        restartButton.addEventListener('click', () => {
+            currentQuestion = 0;
+            score = 0;
+            quizElement.style.display = 'block';
+            resultElement.style.display = 'none';
+            showQuestion();
+            updateProgress();
+        });
+
+        showQuestion();
+    </script>
+</body>
+</html>
